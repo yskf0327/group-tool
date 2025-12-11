@@ -7,7 +7,7 @@ const period = computed(() => {
   if (!props.info) {
     return [];
   }
-  
+
   const start = new Date(props.info.period.start)
   const end = new Date(props.info.period.end)
 
