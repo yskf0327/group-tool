@@ -1,36 +1,66 @@
 <script setup>
-import { computed } from 'vue'
-import projectInfo from './assets/data/project-info.json'
-import membersData from './assets/data/members.json'
-import teamsData from './assets/data/teams.json'
+import { computed, ref, onMounted } from 'vue'
+
+const projectInfo = ref(null);
+const membersData = ref(null);
+const teamsData = ref(null);
+
+onMounted(async () => {
+  try {
+    const baseUrl = import.meta.env.BASE_URL;
+
+    let res = await fetch(`${baseUrl}data/202511_6c_gyoza/project-info.json`);
+    if (!res.ok) throw new Error('Failed to fetch project-info: ' + res.statusText);
+    projectInfo.value = await res.json();
+
+    res = await fetch(`${baseUrl}data/202511_6c_gyoza/members.json`)
+    if (!res.ok) throw new Error('Failed to fetch members: ' + res.statusText);
+    membersData.value = await res.json()
+
+    res = await fetch(`${baseUrl}data/202511_6c_gyoza/teams.json`)
+    if (!res.ok) throw new Error('Failed to fetch teams: ' + res.statusText);
+    teamsData.value = await res.json()
+  } catch (e) {
+    console.error('Error loading data:', e);
+  }
+})
 
 const groups = computed(() => {
-  return teamsData.map((team) => {
-    const members = membersData.filter((m) => m.team_id === team.id)
+  if (membersData.value && teamsData.value) {
 
-    return {
-      id: team.id,
-      name: team.name,
-      members: members
-    }
-  })
+    return teamsData.value.map((team) => {
+      const members = membersData.value.filter((m) => m.team_id === team.id)
+
+      return {
+        id: team.id,
+        name: team.name,
+        members: members
+      }
+    })
+  } else {
+    return [];
+  }
 })
 const period = computed(() => {
-  const start = new Date(projectInfo.period.start)
-  const end = new Date(projectInfo.period.end)
+  if (projectInfo.value) {
+    const start = new Date(projectInfo.value.period.start)
+    const end = new Date(projectInfo.value.period.end)
 
-  const formatDate = (d) => d.toLocaleString('ja-JP', {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  })
+    const formatDate = (d) => d.toLocaleString('ja-JP', {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    })
 
-  return [formatDate(start), formatDate(end)]
+    return [formatDate(start), formatDate(end)]
+  } else {
+    return []
+  }
 })
 </script>
 
 <template>
-  <div class="container">
+  <div v-if="projectInfo" class="container">
     <header class="page-header">
       <h1>{{ projectInfo.title }}</h1>
       <div class="header-info">
@@ -57,7 +87,7 @@ const period = computed(() => {
               'role-leader': member.role === 'リーダー',
               'role-sub': member.role === 'サブリーダー'
             }">{{ member.role
-              }}</span>
+            }}</span>
           </li>
         </ul>
       </div>
