@@ -3,6 +3,7 @@ import { onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router';
 import ProjectHeader from './components/ProjectHeader.vue'
 import GroupList from './components/GroupList.vue'
+import DataSelector from './components/DataSelector.vue'
 import { useGroupData } from './composables/useGroupData';
 
 const route = useRoute()
@@ -39,13 +40,8 @@ const updateLocation = () => {
 </script>
 
 <template>
-  <div class="data-selector">
-    <select name="data-selector" id="data-selector" v-model="currentKey" @change="updateLocation">
-      <option value="202511_6c_gyoza">6C 福岡餃子FES デザインフェーズ</option>
-      <option value="dummy_class_b">テスト用ダミー</option>
-    </select>
-  </div>
   <div v-if="projectInfo" class="container">
+    <DataSelector v-model="currentKey" @change="updateLocation" />
     <ProjectHeader :info="projectInfo" />
     <main>
       <GroupList :groups="groups" />
@@ -53,17 +49,4 @@ const updateLocation = () => {
   </div>
 </template>
 
-<style scoped>
-.data-selector {
-  text-align: right;
-  padding: 1rem;
-}
-
-select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #fff;
-  color: #333;
-}
-</style>
+<style scoped></style>
