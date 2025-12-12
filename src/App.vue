@@ -1,55 +1,69 @@
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
 import ProjectHeader from './components/ProjectHeader.vue'
 import GroupList from './components/GroupList.vue'
+import { useGroupData } from './composables/useGroupData';
 
-const projectInfo = ref(null);
-const membersData = ref(null);
-const teamsData = ref(null);
+const route = useRoute()
+const router = useRouter()
+const { projectInfo, groups, fetchData } = useGroupData()
+
+const currentKey = ref(route.params.id || '202511_6c_gyoza')
+
+const loadData = async (key) => {
+  if (!key) { key = '202511_6c_gyoza' }
+  await fetchData(key)
+}
 
 onMounted(async () => {
-  try {
-    const baseUrl = import.meta.env.BASE_URL;
-
-    let res = await fetch(`${baseUrl}data/202511_6c_gyoza/project-info.json`);
-    if (!res.ok) throw new Error('Failed to fetch project-info: ' + res.statusText);
-    projectInfo.value = await res.json();
-
-    res = await fetch(`${baseUrl}data/202511_6c_gyoza/members.json`)
-    if (!res.ok) throw new Error('Failed to fetch members: ' + res.statusText);
-    membersData.value = await res.json()
-
-    res = await fetch(`${baseUrl}data/202511_6c_gyoza/teams.json`)
-    if (!res.ok) throw new Error('Failed to fetch teams: ' + res.statusText);
-    teamsData.value = await res.json()
-  } catch (e) {
-    console.error('Error loading data:', e);
-  }
+  await fetchData(currentKey.value);
 })
 
-const groups = computed(() => {
-  if (membersData.value && teamsData.value) {
 
-    return teamsData.value.map((team) => {
-      const members = membersData.value.filter((m) => m.team_id === team.id)
-
-      return {
-        id: team.id,
-        name: team.name,
-        members: members
-      }
-    })
-  } else {
-    return [];
+watch(
+  // 第一引数: 監視対象。オブジェクトのプロパティを監視する場合はアロー関数でラップする。
+  () => route.params.id,
+  // 第二引数: 監視対象が変化した時に実行するコールバック関数
+  (newId) => {
+    // 念の為代入
+    currentKey.value = newId || '202511_6c_gyoza'
+    loadData(newId)
   }
-})
+)
+
+// selectがchangeした時に実行される関数。新しいURLを作る。
+const updateLocation = () => {
+  router.push('/' + currentKey.value)
+}
 </script>
 
 <template>
+  <div class="data-selector">
+    <select name="data-selector" id="data-selector" v-model="currentKey" @change="updateLocation">
+      <option value="202511_6c_gyoza">6C 福岡餃子FES デザインフェーズ</option>
+      <option value="dummy_class_b">テスト用ダミー</option>
+    </select>
+  </div>
   <div v-if="projectInfo" class="container">
     <ProjectHeader :info="projectInfo" />
-    <GroupList :groups="groups" />
+    <main>
+      <GroupList :groups="groups" />
+    </main>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.data-selector {
+  text-align: right;
+  padding: 1rem;
+}
+
+select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  color: #333;
+}
+</style>
