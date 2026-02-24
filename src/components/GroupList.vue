@@ -44,8 +44,8 @@ const getSortedMembers = (members) => {
 <style setup>
 .groups-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--s-lg);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--s-md);
 }
 
 .group-card {
