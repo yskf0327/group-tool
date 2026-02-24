@@ -2,6 +2,23 @@
 const props = defineProps({
   groups: Array
 })
+
+const getSortedMembers = (members) => {
+  if (!members) return [];
+  return [...members].sort((a, b) => {
+    const roleRank = {
+      'リーダー': 1,
+      'サブリーダー': 2
+    };
+    const rankA = roleRank[a.role] || 99;
+    const rankB = roleRank[b.role] || 99;
+
+    if (rankA !== rankB) {
+      return rankA - rankB;
+    }
+    return a.no - b.no;
+  });
+};
 </script>
 <template>
   <div class="groups-grid">
@@ -11,7 +28,7 @@ const props = defineProps({
         <span class="member-count">{{ group.members.length }}名</span>
       </div>
       <ul class="member-list">
-        <li v-for="member in group.members" :key="member.no" class="member-item">
+        <li v-for="member in getSortedMembers(group.members)" :key="member.no" class="member-item">
           <span class="member-no">No.{{ member.no }}</span>
           <span class="member-name">{{ member.name }}</span>
           <span v-if="member.role" class="member-role" :class="{
