@@ -8,9 +8,12 @@ const getSortedMembers = (members) => {
   return [...members].sort((a, b) => {
     const roleRank = {
       'リーダー': 1,
+      'ディレクター': 1,
       'サブリーダー': 2,
       'UI/UX': 3,
+      'デザイナー': 3,
       'フロントエンド': 4,
+      'コーダー': 4,
       'サーバサイド': 5
     };
     const rankA = roleRank[a.role] || 99;
@@ -26,9 +29,12 @@ const getSortedMembers = (members) => {
 const getRoleClass = (role) => {
   const classMap = {
     'リーダー': 'role-leader',
+    'ディレクター': 'role-leader',
     'サブリーダー': 'role-sub',
-    'UI/UX': 'role-uiux',
+    'UI/UX': 'role-design',
+    'デザイナー': 'role-design',
     'フロントエンド': 'role-front',
+    'コーダー': 'role-front',
     'サーバサイド': 'role-server'
   };
   return classMap[role] || '';
@@ -114,7 +120,7 @@ const getRoleClass = (role) => {
 
 .member-name {
   flex-grow: 1;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .member-role {
@@ -126,7 +132,7 @@ const getRoleClass = (role) => {
   /* border: 1px solid rgba(34, 211, 238, 0.2); */
 }
 
-/* リーダー用: ゴールドっぽい色 */
+/* リーダー・ディレクター用: ゴールドっぽい色 */
 .role-leader {
   background-color: rgba(251, 191, 36, 0.1);
   color: #fbbf24;
@@ -140,14 +146,14 @@ const getRoleClass = (role) => {
   border: 1px solid rgba(167, 139, 250, 0.2);
 }
 
-/* UI/UX用: ピンク/マゼンタ */
-.role-uiux {
+/* デザイン用 (UI/UX, デザイナー): ピンク/マゼンタ */
+.role-design {
   background-color: rgba(236, 72, 153, 0.1);
   color: #ec4899;
   border: 1px solid rgba(236, 72, 153, 0.2);
 }
 
-/* フロントエンド用: 青/シアン */
+/* フロントエンド用 (コーダー含む): 青/シアン */
 .role-front {
   background-color: rgba(6, 182, 212, 0.1);
   color: #06b6d4;
