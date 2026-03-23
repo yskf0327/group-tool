@@ -9,6 +9,7 @@ defineEmits(['update:modelValue'])
     <select name="data-selector" id="data-selector" :value="modelValue"
       @change="$emit('update:modelValue', $event.target.value)">
       <option value="202602_6c_gyoza">6C 福岡餃子FES 機能実装フェーズ</option>
+      <option value="202604_6c_project">6C 実制作</option>
     </select>
   </div>
 

@@ -8,7 +8,10 @@ const getSortedMembers = (members) => {
   return [...members].sort((a, b) => {
     const roleRank = {
       'リーダー': 1,
-      'サブリーダー': 2
+      'サブリーダー': 2,
+      'UI/UX': 3,
+      'フロントエンド': 4,
+      'サーバサイド': 5
     };
     const rankA = roleRank[a.role] || 99;
     const rankB = roleRank[b.role] || 99;
@@ -18,6 +21,17 @@ const getSortedMembers = (members) => {
     }
     return a.no - b.no;
   });
+};
+
+const getRoleClass = (role) => {
+  const classMap = {
+    'リーダー': 'role-leader',
+    'サブリーダー': 'role-sub',
+    'UI/UX': 'role-uiux',
+    'フロントエンド': 'role-front',
+    'サーバサイド': 'role-server'
+  };
+  return classMap[role] || '';
 };
 </script>
 <template>
@@ -31,11 +45,7 @@ const getSortedMembers = (members) => {
         <li v-for="member in getSortedMembers(group.members)" :key="member.no" class="member-item">
           <span class="member-no">No.{{ member.no }}</span>
           <span class="member-name">{{ member.name }}</span>
-          <span v-if="member.role" class="member-role" :class="{
-            'role-leader': member.role === 'リーダー',
-            'role-sub': member.role === 'サブリーダー'
-          }">{{ member.role
-          }}</span>
+          <span v-if="member.role" class="member-role" :class="getRoleClass(member.role)">{{ member.role }}</span>
         </li>
       </ul>
     </div>
@@ -120,13 +130,34 @@ const getSortedMembers = (members) => {
 .role-leader {
   background-color: rgba(251, 191, 36, 0.1);
   color: #fbbf24;
-  border-color: rgba(251, 191, 36, 0.2);
+  border: 1px solid rgba(251, 191, 36, 0.2);
 }
 
-/* サブリーダー用: 紫っぽい色（例） */
+/* サブリーダー用: 紫っぽい色 */
 .role-sub {
   background-color: rgba(167, 139, 250, 0.1);
   color: #a78bfa;
-  border-color: rgba(167, 139, 250, 0.2);
+  border: 1px solid rgba(167, 139, 250, 0.2);
+}
+
+/* UI/UX用: ピンク/マゼンタ */
+.role-uiux {
+  background-color: rgba(236, 72, 153, 0.1);
+  color: #ec4899;
+  border: 1px solid rgba(236, 72, 153, 0.2);
+}
+
+/* フロントエンド用: 青/シアン */
+.role-front {
+  background-color: rgba(6, 182, 212, 0.1);
+  color: #06b6d4;
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+/* サーバサイド用: 緑/エメラルド */
+.role-server {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 </style>

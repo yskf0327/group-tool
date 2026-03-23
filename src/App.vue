@@ -9,11 +9,11 @@ import { useGroupData } from './composables/useGroupData';
 const route = useRoute()
 const router = useRouter()
 const { projectInfo, groups, fetchData } = useGroupData()
-
-const currentKey = ref(route.params.id || '202602_6c_gyoza')
+const defaultKey = '202604_6c_project'; //初期選択プロジェクト
+const currentKey = ref(route.params.id || defaultKey)
 
 const loadData = async (key) => {
-  if (!key) { key = '202602_6c_gyoza' }
+  if (!key) { key = defaultKey }
   await fetchData(key)
 }
 
@@ -28,7 +28,7 @@ watch(
   // 第二引数: 監視対象が変化した時に実行するコールバック関数
   (newId) => {
     // 念の為代入
-    currentKey.value = newId || '202602_6c_gyoza'
+    currentKey.value = newId || defaultKey
     loadData(newId)
   }
 )
